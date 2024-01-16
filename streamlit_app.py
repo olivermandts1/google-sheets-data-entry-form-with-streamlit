@@ -71,7 +71,7 @@ with st.form(key="vendor_form"):
             updated_df = pd.concat([existing_data, vendor_data], ignore_index=True)
 
             # Update Google Sheets with the new vendor data
-            conn.update(worksheet="Vendors", data=updated_df)
+            conn.update(worksheet="Test", data=updated_df)
 
             st.success("Vendor details successfully submitted!")
 
