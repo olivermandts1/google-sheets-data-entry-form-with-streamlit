@@ -25,7 +25,7 @@ PRODUCTS = [
 conn = st.experimental_connection("gsheets", type=GSheetsConnection)
 
 # Fetch existing vendors data
-existing_data = conn.read(worksheet="Test", usecols=list(range(6)), ttl=5)
+existing_data = conn.read(worksheet="PlutusDataImport", usecols=list(range(6)), ttl=5)
 existing_data = existing_data.dropna(how="all")
 
 action = st.selectbox(
