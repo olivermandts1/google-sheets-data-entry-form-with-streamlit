@@ -72,7 +72,7 @@ if action == "Onboard New Vendor":
                     ]
                 )
                 updated_df = pd.concat([existing_data, vendor_data], ignore_index=True)
-                conn.update(worksheet="Vendors", data=updated_df)
+                conn.update(worksheet="Test", data=updated_df)
                 st.success("Vendor details successfully submitted!")
 
 elif action == "Update Existing Vendor":
@@ -140,7 +140,7 @@ elif action == "Update Existing Vendor":
                 updated_df = pd.concat(
                     [existing_data, updated_vendor_data], ignore_index=True
                 )
-                conn.update(worksheet="Vendors", data=updated_df)
+                conn.update(worksheet="Test", data=updated_df)
                 st.success("Vendor details successfully updated!")
 
 # View All Vendors
@@ -158,5 +158,5 @@ elif action == "Delete Vendor":
             existing_data[existing_data["CompanyName"] == vendor_to_delete].index,
             inplace=True,
         )
-        conn.update(worksheet="Vendors", data=existing_data)
+        conn.update(worksheet="Test", data=existing_data)
         st.success("Vendor successfully deleted!")
