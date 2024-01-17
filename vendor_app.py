@@ -12,10 +12,18 @@ def replace_dynamic_keys(prompt, headlines, primary_text, descriptions, forcekey
     prompt = prompt.replace('[forcekeys]', ', '.join(forcekeys))
     return prompt
 
+# Function to generate response using OpenAI API
 def generate_response(system_prompt, user_prompt, model, temperature, api_key, dynamic_values):
     client = OpenAI(api_key=api_key)
+
+    # Ensure prompts are strings
+    system_prompt = str(system_prompt) if system_prompt else ""
+    user_prompt = str(user_prompt) if user_prompt else ""
+
+    # Replace dynamic keys with actual values
     system_prompt = replace_dynamic_keys(system_prompt, *dynamic_values)
     user_prompt = replace_dynamic_keys(user_prompt, *dynamic_values)
+
     response = client.chat.completions.create(
         model=model,
         messages=[
