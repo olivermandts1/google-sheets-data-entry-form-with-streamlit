@@ -22,11 +22,15 @@ desired_range.fillna('', inplace=True)
 # Rename the columns
 desired_range.columns = ['Asset Type', 'Creative Text']
 
-# Store values, omitting nulls
-headlines = [text for text in desired_range[desired_range['Asset Type'] == 'Headlines']['Creative Text'] if text]
-primary_text = [text for text in desired_range[desired_range['Asset Type'] == 'Primary Text']['Creative Text'] if text]
-descriptions = [text for text in desired_range[desired_range['Asset Type'] == 'Description']['Creative Text'] if text]
-forcekeys = [text for text in desired_range[desired_range['Asset Type'] == 'Forcekeys']['Creative Text'] if text]
+# Function to format the values, omitting nulls or empty strings
+def format_values(asset_type, texts):
+    return '\n'.join([f'{asset_type}: {text}' for text in texts if text])
+
+# Store and format values, omitting nulls or empty strings
+headlines = format_values('Headlines', desired_range[desired_range['Asset Type'] == 'Headlines']['Creative Text'].tolist())
+primary_text = format_values('Primary Text', desired_range[desired_range['Asset Type'] == 'Primary Text']['Creative Text'].tolist())
+descriptions = format_values('Description', desired_range[desired_range['Asset Type'] == 'Description']['Creative Text'].tolist())
+forcekeys = format_values('Forcekeys', desired_range[desired_range['Asset Type'] == 'Forcekeys']['Creative Text'].tolist())
 
 # Use st.expander to create a toggle for showing the full table
 with st.expander("Show Full Table"):
@@ -66,12 +70,11 @@ if 'form_count' not in st.session_state:
 if 'responses' not in st.session_state:
     st.session_state['responses'] = []
 
-# Function to replace dynamic keys in the prompt with actual values
 def replace_dynamic_keys(prompt):
-    prompt = prompt.replace('[headlines]', ', '.join(headlines))
-    prompt = prompt.replace('[primary_text]', ', '.join(primary_text))
-    prompt = prompt.replace('[descriptions]', ', '.join(descriptions))
-    prompt = prompt.replace('[forcekeys]', ', '.join(forcekeys))
+    prompt = prompt.replace('[headlines]', headlines)
+    prompt = prompt.replace('[primary_text]', primary_text)
+    prompt = prompt.replace('[descriptions]', descriptions)
+    prompt = prompt.replace('[forcekeys]', forcekeys)
     return prompt
 
 # Function to generate response using OpenAI API
