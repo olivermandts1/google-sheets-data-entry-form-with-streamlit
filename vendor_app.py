@@ -117,32 +117,39 @@ if menu_item == "Creative Text Refresher":
     chain_names = chain_names_df['ChainName'].dropna().unique().tolist()
     selected_chain = st.selectbox("Select a Prompt Chain", chain_names)
 
-    # Button to execute the selected chain
     if st.button("Create Assets"):
-        # Fetch the data for the selected chain
-        chain_data = conn.read(worksheet="PromptChainRepo", usecols=list(range(40)), ttl=5)
-        selected_chain_data = chain_data[chain_data['ChainName'] == selected_chain].iloc[0]
+    # Fetch the data for the selected chain
+    chain_data = conn.read(worksheet="YourWorksheetName", usecols=list(range(40)), ttl=5)
+    selected_chain_data = chain_data[chain_data['ChainName'] == selected_chain].iloc[0]
 
-        # Initialize variables for dynamic values
-        dynamic_values = (headlines, primary_text, descriptions, forcekeys)
+    # Initialize variables for dynamic values
+    dynamic_values = (headlines, primary_text, descriptions, forcekeys)
 
-        # Process each link in the chain
-        responses = []
-        for i in range(1, 11):  # Assuming maximum 10 prompts in a chain
-            model = selected_chain_data[f'Model{i}']
-            if model:  # Check if the model value is not empty
-                temperature = selected_chain_data[f'Temperature{i}']
-                system_prompt = selected_chain_data[f'SystemPrompt{i}']
-                user_prompt = selected_chain_data[f'UserPrompt{i}']
+    # Process each link in the chain
+    responses = []
+    for i in range(1, 11):  # Assuming maximum 10 prompts in a chain
+        model_key = f'Model{i}'
+        temp_key = f'Temperature{i}'
+        sys_prompt_key = f'SystemPrompt{i}'
+        user_prompt_key = f'UserPrompt{i}'
 
-                # Generate response
-                response = generate_response(system_prompt, user_prompt, model, temperature, openai_api_key, dynamic_values)
-                responses.append(response)
+        # Check if the entire set of model, temperature, system_prompt, and user_prompt is not null
+        if all(pd.notnull(selected_chain_data.get(key)) for key in [model_key, temp_key, sys_prompt_key, user_prompt_key]):
+            model = selected_chain_data[model_key]
+            temperature = selected_chain_data[temp_key]
+            system_prompt = selected_chain_data[sys_prompt_key]
+            user_prompt = selected_chain_data[user_prompt_key]
 
-        # Display the final response
-        if responses:
-            st.write("Final Output:", responses[-1])
+            # Generate response
+            response = generate_response(system_prompt, user_prompt, model, temperature, openai_api_key, dynamic_values)
+            responses.append(response)
+        else:
+            # Stop processing if any of the set is null
+            break
 
+    # Display the final response
+    if responses:
+        st.write("Final Output:", responses[-1])
 
 elif menu_item == "Prompt Chain Builder":
     # Display Title and Description
