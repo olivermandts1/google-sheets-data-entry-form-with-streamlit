@@ -166,7 +166,7 @@ if menu_item == "Creative Text Refresher":
 elif menu_item == "Prompt Chain Builder":
     # Display Title and Description
     st.title("Prompt Chain Builder")
-    st.markdown("Test and save new prompt chains below.")
+    st.markdown("Test your prompt chains using existing data, and then fill out the form to save them to our Google Sheets repository.")
 
 
     # Create a connection using Streamlit's experimental connection feature
@@ -221,6 +221,7 @@ elif menu_item == "Prompt Chain Builder":
         # Display the DataFrame with text wrapping inside the expander
         st.markdown(desired_range.to_html(escape=False, index=False), unsafe_allow_html=True)
 
+    st.title("Test Your Chain Here")
     from openai import OpenAI
 
     # User inputs their OpenAI API key in the sidebar
@@ -292,7 +293,7 @@ elif menu_item == "Prompt Chain Builder":
             user_prompt = st.text_area('User Prompt', key=f'user_{i}')
 
     # Single submit button for all inputs
-    if st.button('Submit All'):
+    if st.button('Test Prompt'):
         if not openai_api_key:
             st.warning('Please enter your OpenAI API key!', icon='⚠️')
         else:
