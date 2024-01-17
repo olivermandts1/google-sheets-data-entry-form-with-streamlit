@@ -1,7 +1,30 @@
 import streamlit as st
-from streamlit_gsheets import GSheetsConnection
 import pandas as pd
+from streamlit_gsheets import GSheetsConnection
+from openai import OpenAI
 
+
+# Define the necessary functions
+def replace_dynamic_keys(prompt, headlines, primary_text, descriptions, forcekeys):
+    prompt = prompt.replace('[headlines]', ', '.join(headlines))
+    prompt = prompt.replace('[primary_text]', ', '.join(primary_text))
+    prompt = prompt.replace('[descriptions]', ', '.join(descriptions))
+    prompt = prompt.replace('[forcekeys]', ', '.join(forcekeys))
+    return prompt
+
+def generate_response(system_prompt, user_prompt, model, temperature, api_key, dynamic_values):
+    client = OpenAI(api_key=api_key)
+    system_prompt = replace_dynamic_keys(system_prompt, *dynamic_values)
+    user_prompt = replace_dynamic_keys(user_prompt, *dynamic_values)
+    response = client.chat.completions.create(
+        model=model,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
+        temperature=temperature
+    )
+    return response.choices[0].message.content.strip('"')
 
 # Sidebar menu
 menu_item = st.sidebar.selectbox("Menu", ["Creative Text Refresher", "Prompt Chain Builder"])
@@ -66,131 +89,40 @@ if menu_item == "Creative Text Refresher":
         # Display the DataFrame with text wrapping inside the expander
         st.markdown(desired_range.to_html(escape=False, index=False), unsafe_allow_html=True)
 
-    from openai import OpenAI
 
     # User inputs their OpenAI API key in the sidebar
     openai_api_key = st.secrets["openai_secret"]
 
-    # Fetch chain names from Google Sheet
-    chain_names_df = conn.read(worksheet="PromptChainRepo", usecols=['ChainName'], ttl=5)
+        # Dropdown to select a chain name
+    chain_names_df = conn.read(worksheet="YourWorksheetName", usecols=['ChainName'], ttl=5)
     chain_names = chain_names_df['ChainName'].dropna().unique().tolist()
-
-    # Dropdown to select a chain name
     selected_chain = st.selectbox("Select a Prompt Chain", chain_names)
 
-  # Button to execute the selected chain
+    # Button to execute the selected chain
     if st.button("Create Assets"):
         # Fetch the data for the selected chain
-        chain_data = conn.read(worksheet="PromptChainRepo", usecols=list(range(40)), ttl=5)
-        selected_chain_data = chain_data[chain_data['ChainName'] == selected_chain]
+        chain_data = conn.read(worksheet="YourWorksheetName", usecols=list(range(40)), ttl=5)
+        selected_chain_data = chain_data[chain_data['ChainName'] == selected_chain].iloc[0]
 
-        # Extracting and executing each prompt in the chain
+        # Initialize variables for dynamic values
+        dynamic_values = (headlines, primary_text, descriptions, forcekeys)
+
+        # Process each link in the chain
         responses = []
         for i in range(1, 11):  # Assuming maximum 10 prompts in a chain
-            model = selected_chain_data[f'Model{i}'].values[0]
+            model = selected_chain_data[f'Model{i}']
             if model:  # Check if the model value is not empty
-                temperature = selected_chain_data[f'Temperature{i}'].values[0]
-                system_prompt = selected_chain_data[f'SystemPrompt{i}'].values[0]
-                user_prompt = selected_chain_data[f'UserPrompt{i}'].values[0]
+                temperature = selected_chain_data[f'Temperature{i}']
+                system_prompt = selected_chain_data[f'SystemPrompt{i}']
+                user_prompt = selected_chain_data[f'UserPrompt{i}']
 
                 # Generate response
-                response = generate_response(system_prompt, user_prompt, model, temperature)
+                response = generate_response(system_prompt, user_prompt, model, temperature, openai_api_key, dynamic_values)
                 responses.append(response)
 
         # Display the final response
         if responses:
             st.write("Final Output:", responses[-1])
-
-    # Initialize or update the session state for form count and responses
-    if 'form_count' not in st.session_state:
-        st.session_state['form_count'] = 1
-    if 'responses' not in st.session_state:
-        st.session_state['responses'] = []
-
-    # Function to replace dynamic keys in the prompt with actual values
-    def replace_dynamic_keys(prompt):
-        prompt = prompt.replace('[headlines]', ', '.join(headlines))
-        prompt = prompt.replace('[primary_text]', ', '.join(primary_text))
-        prompt = prompt.replace('[descriptions]', ', '.join(descriptions))
-        prompt = prompt.replace('[forcekeys]', ', '.join(forcekeys))
-        return prompt
-
-    # Function to generate response using OpenAI API
-    def generate_response(system_prompt, user_prompt, model="gpt-4", temperature=0.00):
-        client = OpenAI(api_key=openai_api_key)
-
-        # Replace dynamic keys with actual values
-        system_prompt = replace_dynamic_keys(system_prompt)
-        user_prompt = replace_dynamic_keys(user_prompt)
-
-        # Map the friendly model name to the actual model ID
-        model_id = {
-            'gpt-3.5-turbo': 'gpt-3.5-turbo',
-            'gpt-4': 'gpt-4',
-            # Add other models as needed
-        }.get(model, model)  # Default to the provided model name if it's not in the dictionary
-
-        response = client.chat.completions.create(
-            model=model_id,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
-            temperature=temperature
-        )
-        return response.choices[0].message.content.strip('"')
-
-    # Function to add a new prompt
-    def add_prompt():
-        st.session_state['form_count'] += 1
-
-    # Function to remove the latest prompt
-    def remove_prompt():
-        if st.session_state['form_count'] > 1:
-            st.session_state['form_count'] -= 1
-
-    # Buttons to add or remove a prompt
-    col1, col2 = st.columns(2)
-    with col1:
-        st.button('Add Prompt', on_click=add_prompt)
-    with col2:
-        st.button('Remove Prompt', on_click=remove_prompt)
-
-    # Create expanders for each set of inputs
-    for i in range(st.session_state['form_count']):
-        with st.expander(f"Chain Link {i+1}", expanded=True):
-            model = st.selectbox('OpenAI Model', 
-                                ('gpt-3.5-turbo', 'gpt-4'), 
-                                key=f'model_{i}')
-            temperature = st.number_input('Temperature', min_value=0.00, max_value=1.00, value=0.00, key=f'temp_{i}')
-            system_prompt = st.text_area('System Prompt:', key=f'system_{i}')
-            user_prompt = st.text_area('User Prompt', key=f'user_{i}')
-
-    # Single submit button for all inputs
-    if st.button('Submit All'):
-        if not openai_api_key:
-            st.warning('Please enter your OpenAI API key!', icon='⚠️')
-        else:
-            st.session_state['responses'] = []
-            for i in range(st.session_state['form_count']):
-                # Retrieve the model and temperature specific to each form
-                current_model = st.session_state[f'model_{i}']
-                current_temperature = st.session_state[f'temp_{i}']
-
-                # Get the current system and user prompts
-                current_system_prompt = st.session_state[f'system_{i}']
-                current_user_prompt = st.session_state[f'user_{i}']
-
-                # Apply dynamic replacements to both system and user prompts
-                for j in range(i):
-                    replacement_text = st.session_state['responses'][j]
-                    current_system_prompt = current_system_prompt.replace(f'[output {j+1}]', replacement_text)
-                    current_user_prompt = current_user_prompt.replace(f'[output {j+1}]', replacement_text)
-
-                # Pass the specific model and temperature for each form
-                response = generate_response(current_system_prompt, current_user_prompt, current_model, current_temperature)
-                st.session_state['responses'].append(response)
-                st.text(f"**Generated Response {i+1}:** \n\n{response}")
 
 
 elif menu_item == "Prompt Chain Builder":
@@ -252,7 +184,6 @@ elif menu_item == "Prompt Chain Builder":
         st.markdown(desired_range.to_html(escape=False, index=False), unsafe_allow_html=True)
 
     st.title("Test Your Chain Here")
-    from openai import OpenAI
 
     # User inputs their OpenAI API key in the sidebar
     openai_api_key = st.secrets["openai_secret"]
