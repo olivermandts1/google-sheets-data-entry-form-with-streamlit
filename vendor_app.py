@@ -227,6 +227,8 @@ elif menu_item == "Prompt Chain Builder":
     # User inputs their OpenAI API key in the sidebar
     openai_api_key = st.secrets["openai_secret"]
 
+    prompt_chain_name = st.text_input("Enter the name for your chain:")
+
     # Initialize or update the session state for form count and responses
     if 'form_count' not in st.session_state:
         st.session_state['form_count'] = 1
@@ -317,6 +319,11 @@ elif menu_item == "Prompt Chain Builder":
                 response = generate_response(current_system_prompt, current_user_prompt, current_model, current_temperature)
                 st.session_state['responses'].append(response)
                 st.text(f"**Generated Response {i+1}:** \n\n{response}")
+
+
+    st.title("Save Your Chain Below")
+    st.button ('Save Prompt Chain')
+
 
     # Constants
     BUSINESS_TYPES = [
