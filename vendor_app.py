@@ -119,7 +119,7 @@ if menu_item == "Creative Text Refresher":
 
     if st.button("Create Assets"):
         # Fetch the data for the selected chain
-        chain_data = conn.read(worksheet="YourWorksheetName", usecols=list(range(40)), ttl=5)
+        chain_data = conn.read(worksheet="PromptChainRepo", usecols=list(range(40)), ttl=5)
         selected_chain_data = chain_data[chain_data['ChainName'] == selected_chain].iloc[0]
 
         # Initialize variables for dynamic values
