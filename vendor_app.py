@@ -71,6 +71,13 @@ if menu_item == "Creative Text Refresher":
     # User inputs their OpenAI API key in the sidebar
     openai_api_key = st.secrets["openai_secret"]
 
+    # Fetch chain names from Google Sheet
+    chain_names_df = conn.read(worksheet="PromptChainRepo", usecols=['ChainName'], ttl=5)
+    chain_names = chain_names_df['ChainName'].dropna().unique().tolist()
+
+    # Dropdown to select a chain name
+    selected_chain = st.selectbox("Select a Prompt Chain", chain_names)
+
     # Initialize or update the session state for form count and responses
     if 'form_count' not in st.session_state:
         st.session_state['form_count'] = 1
