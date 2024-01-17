@@ -51,9 +51,8 @@ menu_item = st.sidebar.selectbox("Menu", ["Creative Text Refresher", "Prompt Cha
 if menu_item == "Creative Text Refresher":
 
     st.subheader("📗 Refresh FB Creatives From Your Plutus Spreadsheet")
-
-    url = "https://docs.google.com/spreadsheets/d/1tqm7G0yzckwSCKXdPcGcWNH6y5nMj68rhpMQZlcO2wU/edit#gid=1913725997"
-
+    st.markdown("Currently Linked Plutus Sheet: https://docs.google.com/spreadsheets/d/141YaOszXibklI2qqRiyGdox3mpyCioFK5eJMtD78iJE/edit#gid=962857946")
+    st.markdown("Prompt Chain Repository: https://docs.google.com/spreadsheets/d/1tqm7G0yzckwSCKXdPcGcWNH6y5nMj68rhpMQZlcO2wU/edit#gid=954337905")
     st.write("#### 1. Retrieved Plutus Creatives")
 
     # Create a connection using Streamlit's experimental connection feature
