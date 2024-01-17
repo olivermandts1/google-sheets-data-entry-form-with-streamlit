@@ -354,7 +354,7 @@ elif menu_item == "Prompt Chain Builder":
         updated_df = pd.concat([existing_data, chain_df], ignore_index=True)
 
         # Update the Google Sheet
-        conn.update(worksheet="YourWorksheetName", data=updated_df)
+        conn.update(worksheet="PromptChainRepo", data=updated_df)
         st.success("Prompt chain successfully saved!")
 
 
