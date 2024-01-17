@@ -24,15 +24,26 @@ def generate_response(system_prompt, user_prompt, model, temperature, api_key, d
     system_prompt = replace_dynamic_keys(system_prompt, *dynamic_values)
     user_prompt = replace_dynamic_keys(user_prompt, *dynamic_values)
 
-    response = client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
-        ],
-        temperature=temperature
-    )
-    return response.choices[0].message.content.strip('"')
+    # Debugging: Print the request payload
+    print("Sending request to OpenAI with the following parameters:")
+    print(f"Model: {model}")
+    print(f"Temperature: {temperature}")
+    print(f"System Prompt: {system_prompt}")
+    print(f"User Prompt: {user_prompt}")
+
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            temperature=temperature
+        )
+        return response.choices[0].message.content.strip('"')
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return "An error occurred while generating the response."
 
 # Sidebar menu
 menu_item = st.sidebar.selectbox("Menu", ["Creative Text Refresher", "Prompt Chain Builder"])
