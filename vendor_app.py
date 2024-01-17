@@ -94,14 +94,14 @@ if menu_item == "Creative Text Refresher":
     openai_api_key = st.secrets["openai_secret"]
 
         # Dropdown to select a chain name
-    chain_names_df = conn.read(worksheet="YourWorksheetName", usecols=['ChainName'], ttl=5)
+    chain_names_df = conn.read(worksheet="PromptChainRepo", usecols=['ChainName'], ttl=5)
     chain_names = chain_names_df['ChainName'].dropna().unique().tolist()
     selected_chain = st.selectbox("Select a Prompt Chain", chain_names)
 
     # Button to execute the selected chain
     if st.button("Create Assets"):
         # Fetch the data for the selected chain
-        chain_data = conn.read(worksheet="YourWorksheetName", usecols=list(range(40)), ttl=5)
+        chain_data = conn.read(worksheet="PromptChainRepo", usecols=list(range(40)), ttl=5)
         selected_chain_data = chain_data[chain_data['ChainName'] == selected_chain].iloc[0]
 
         # Initialize variables for dynamic values
