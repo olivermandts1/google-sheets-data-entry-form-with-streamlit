@@ -347,7 +347,7 @@ elif menu_item == "Prompt Chain Builder":
         chain_df = pd.DataFrame([chain_data])
 
         # Fetch existing data from Google Sheet
-        existing_data = conn.read(worksheet="YourWorksheetName", usecols=list(range(40)), ttl=5)
+        existing_data = conn.read(worksheet="PromptChainRepo", usecols=list(range(40)), ttl=5)
         existing_data = existing_data.dropna(how="all")
 
         # Append the new data
@@ -358,7 +358,7 @@ elif menu_item == "Prompt Chain Builder":
         st.success("Prompt chain successfully saved!")
 
 
-        
+
     # Constants
     BUSINESS_TYPES = [
         "Manufacturer",
