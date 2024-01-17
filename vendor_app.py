@@ -116,47 +116,47 @@ if menu_item == "Creative Text Refresher":
     chain_names = chain_names_df['ChainName'].dropna().unique().tolist()
     selected_chain = st.selectbox("Select a Prompt Chain", chain_names)
 
-if st.button("Create Assets"):
-    # Fetch the data for the selected chain
-    chain_data = conn.read(worksheet="PromptChainRepo", usecols=list(range(40)), ttl=5)
-    selected_chain_data = chain_data[chain_data['ChainName'] == selected_chain].iloc[0]
+    if st.button("Create Assets"):
+        # Fetch the data for the selected chain
+        chain_data = conn.read(worksheet="PromptChainRepo", usecols=list(range(40)), ttl=5)
+        selected_chain_data = chain_data[chain_data['ChainName'] == selected_chain].iloc[0]
 
-    # Initialize variables for dynamic values
-    dynamic_values = (headlines, primary_text, descriptions, forcekeys)
+        # Initialize variables for dynamic values
+        dynamic_values = (headlines, primary_text, descriptions, forcekeys)
 
-    # Initialize a list to store responses
-    st.session_state['responses'] = []
+        # Initialize a list to store responses
+        st.session_state['responses'] = []
 
-    # Process each link in the chain
-    for i in range(1, 11):  # Assuming maximum 10 prompts in a chain
-        model_key = f'Model{i}'
-        temp_key = f'Temperature{i}'
-        sys_prompt_key = f'SystemPrompt{i}'
-        user_prompt_key = f'UserPrompt{i}'
+        # Process each link in the chain
+        for i in range(1, 11):  # Assuming maximum 10 prompts in a chain
+            model_key = f'Model{i}'
+            temp_key = f'Temperature{i}'
+            sys_prompt_key = f'SystemPrompt{i}'
+            user_prompt_key = f'UserPrompt{i}'
 
-        # Check if the entire set of model, temperature, system_prompt, and user_prompt is not null
-        if all(pd.notnull(selected_chain_data.get(key)) for key in [model_key, temp_key, sys_prompt_key, user_prompt_key]):
-            model = selected_chain_data[model_key]
-            temperature = selected_chain_data[temp_key]
-            system_prompt = selected_chain_data[sys_prompt_key]
-            user_prompt = selected_chain_data[user_prompt_key]
+            # Check if the entire set of model, temperature, system_prompt, and user_prompt is not null
+            if all(pd.notnull(selected_chain_data.get(key)) for key in [model_key, temp_key, sys_prompt_key, user_prompt_key]):
+                model = selected_chain_data[model_key]
+                temperature = selected_chain_data[temp_key]
+                system_prompt = selected_chain_data[sys_prompt_key]
+                user_prompt = selected_chain_data[user_prompt_key]
 
-            # Apply dynamic replacements to both system and user prompts
-            for j in range(i-1):
-                replacement_text = st.session_state['responses'][j]
-                system_prompt = system_prompt.replace(f'[output {j+1}]', replacement_text)
-                user_prompt = user_prompt.replace(f'[output {j+1}]', replacement_text)
+                # Apply dynamic replacements to both system and user prompts
+                for j in range(i-1):
+                    replacement_text = st.session_state['responses'][j]
+                    system_prompt = system_prompt.replace(f'[output {j+1}]', replacement_text)
+                    user_prompt = user_prompt.replace(f'[output {j+1}]', replacement_text)
 
-            # Generate response
-            response = generate_response(system_prompt, user_prompt, model, temperature, openai_api_key, dynamic_values)
-            st.session_state['responses'].append(response)
-        else:
-            # Stop processing if any of the set is null
-            break
+                # Generate response
+                response = generate_response(system_prompt, user_prompt, model, temperature, openai_api_key, dynamic_values)
+                st.session_state['responses'].append(response)
+            else:
+                # Stop processing if any of the set is null
+                break
 
-    # Display the final response
-    if st.session_state['responses']:
-        st.write("Final Output:", st.session_state['responses'][-1])
+        # Display the final response
+        if st.session_state['responses']:
+            st.write("Final Output:", st.session_state['responses'][-1])
 
 elif menu_item == "Prompt Chain Builder":
     # Display Title and Description
