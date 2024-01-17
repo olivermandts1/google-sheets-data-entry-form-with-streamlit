@@ -322,9 +322,43 @@ elif menu_item == "Prompt Chain Builder":
 
 
     st.title("Save Your Chain Below")
-    st.button ('Save Prompt Chain')
+    # Save Prompt Chain button functionality
+    if st.button('Save Prompt Chain'):
+        # Dictionary to hold the data for the row
+        chain_data = {
+            'ChainName': prompt_chain_name
+        }
+
+        # Collecting data from each form
+        for i in range(st.session_state['form_count']):
+            chain_data[f'Model{i+1}'] = st.session_state.get(f'model_{i}')
+            chain_data[f'Temperature{i+1}'] = st.session_state.get(f'temp_{i}')
+            chain_data[f'SystemPrompt{i+1}'] = st.session_state.get(f'system_{i}')
+            chain_data[f'UserPrompt{i+1}'] = st.session_state.get(f'user_{i}')
+
+        # Fill in the remaining columns for forms not used
+        for j in range(st.session_state['form_count'] + 1, 11):
+            chain_data[f'Model{j}'] = ''
+            chain_data[f'Temperature{j}'] = ''
+            chain_data[f'SystemPrompt{j}'] = ''
+            chain_data[f'UserPrompt{j}'] = ''
+
+        # Convert to DataFrame
+        chain_df = pd.DataFrame([chain_data])
+
+        # Fetch existing data from Google Sheet
+        existing_data = conn.read(worksheet="YourWorksheetName", usecols=list(range(40)), ttl=5)
+        existing_data = existing_data.dropna(how="all")
+
+        # Append the new data
+        updated_df = pd.concat([existing_data, chain_df], ignore_index=True)
+
+        # Update the Google Sheet
+        conn.update(worksheet="YourWorksheetName", data=updated_df)
+        st.success("Prompt chain successfully saved!")
 
 
+        
     # Constants
     BUSINESS_TYPES = [
         "Manufacturer",
