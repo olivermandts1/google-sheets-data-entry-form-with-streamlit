@@ -81,7 +81,7 @@ if menu_item == "Creative Text Refresher":
   # Button to execute the selected chain
     if st.button("Create Assets"):
         # Fetch the data for the selected chain
-        chain_data = conn.read(worksheet="YourWorksheetName", usecols=list(range(40)), ttl=5)
+        chain_data = conn.read(worksheet="PromptChainRepo", usecols=list(range(40)), ttl=5)
         selected_chain_data = chain_data[chain_data['ChainName'] == selected_chain]
 
         # Extracting and executing each prompt in the chain
