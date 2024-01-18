@@ -155,49 +155,49 @@ if menu_item == "Creative Text Refresher":
                 # Stop processing if any of the set is null
                 break
 
-            def streamlit_app():
-                st.title("Editable JSON Data")
+                def streamlit_app():
+                    st.title("Editable JSON Data")
 
-                # Check if there are responses and use the latest one
-                if st.session_state.get('responses'):
-                    json_data = st.session_state['responses'][-1]
-                    st.write("Final Output:", json_data)
+                    # Check if there are responses and use the latest one
+                    if st.session_state.get('responses'):
+                        json_data = st.session_state['responses'][-1]
+                        st.write("Final Output:", json_data)
 
-                    # Convert JSON to dictionary
-                    try:
-                        data = json.loads(json_data)
-                    except json.JSONDecodeError:
-                        st.error("Invalid JSON format in the response.")
-                        return
+                        # Convert JSON to dictionary
+                        try:
+                            data = json.loads(json_data)
+                        except json.JSONDecodeError:
+                            st.error("Invalid JSON format in the response.")
+                            return
 
-                    # Extracting data from the JSON structure
-                    assets = data.get("assets", [])
-                    headlines = [asset.get("headline", "") for asset in assets]
-                    primary_texts = [asset.get("primary_text", "") for asset in assets]
-                    descriptions = [asset.get("description", "") for asset in assets]
+                        # Extracting data from the JSON structure
+                        assets = data.get("assets", [])
+                        headlines = [asset.get("headline", "") for asset in assets]
+                        primary_texts = [asset.get("primary_text", "") for asset in assets]
+                        descriptions = [asset.get("description", "") for asset in assets]
 
-                    # Create DataFrame
-                    df = pd.DataFrame({
-                        "Content": headlines + [''] + primary_texts + [''] + descriptions
-                    })
+                        # Create DataFrame
+                        df = pd.DataFrame({
+                            "Content": headlines + [''] + primary_texts + [''] + descriptions
+                        })
 
-                    # Truncate the DataFrame to have at most 5 entries per section
-                    max_entries = 5
-                    df = df.iloc[:max_entries + 1 + max_entries + 1 + max_entries]
+                        # Truncate the DataFrame to have at most 5 entries per section
+                        max_entries = 5
+                        df = df.iloc[:max_entries + 1 + max_entries + 1 + max_entries]
 
-                    # Display the DataFrame content for debugging
-                    st.write("DataFrame Content:")
-                    st.dataframe(df)
+                        # Display the DataFrame content for debugging
+                        st.write("DataFrame Content:")
+                        st.dataframe(df)
 
-                    # Display editable DataFrame
-                    st.dataframe(df)
-                else:
-                    st.write("No responses available.")
+                        # Display editable DataFrame
+                        st.dataframe(df)
+                    else:
+                        st.write("No responses available.")
 
-            if __name__ == "__main__":
-                streamlit_app()
+                if __name__ == "__main__":
+                    streamlit_app()
 
-                
+
 elif menu_item == "Prompt Chain Builder":
     # Display Title and Description
     st.title("Prompt Chain Builder")
