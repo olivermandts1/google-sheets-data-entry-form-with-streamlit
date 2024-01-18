@@ -182,10 +182,7 @@ if menu_item == "Creative Text Refresher":
                 df = df.iloc[:max_entries + 1 + max_entries + 1 + max_entries]
 
                 # Display the DataFrame content for debugging
-                st.write("DataFrame Content:")
-                st.dataframe(df)
-
-                # Display editable DataFrame
+                st.write("Paste this table into Plutus:")
                 st.dataframe(df)
         else:
             st.write("No responses available.")
