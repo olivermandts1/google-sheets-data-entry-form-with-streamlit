@@ -170,7 +170,7 @@ if menu_item == "Creative Text Refresher":
                     data = json.loads(json_data)
                 except json.JSONDecodeError:
                     st.error("Invalid JSON format in the response.")
-                    return
+                    continue
 
                 # Extracting data from the JSON structure
                 assets = data.get("assets", [])
