@@ -157,7 +157,7 @@ if menu_item == "Creative Text Refresher":
 
         # Display the final response
         if st.session_state['responses']:
-            st.write("Final Output:", st.session_state['responses'][-1])
+            st.write("Debugging Output:", st.session_state['responses'][-1])
                 # Check if there are responses and use the latest one
 
         # Check if there are responses and use the latest one
