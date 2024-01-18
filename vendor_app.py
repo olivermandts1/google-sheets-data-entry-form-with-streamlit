@@ -176,10 +176,10 @@ if menu_item == "Creative Text Refresher":
                 primary_texts = [asset.get("primary_text", "") for asset in assets]
                 descriptions = [asset.get("description", "") for asset in assets]
 
-                # Ensuring each list has 5 elements, adding blanks if necessary
-                headlines += [""] * (5 - len(headlines))
-                primary_texts += [""] * (5 - len(primary_texts))
-                descriptions += [""] * (5 - len(descriptions))
+                # Pad lists with blank strings if they have less than 5 elements
+                headlines.extend([""] * (5 - len(headlines)))
+                primary_texts.extend([""] * (5 - len(primary_texts)))
+                descriptions.extend([""] * (5 - len(descriptions)))
 
                 # Create DataFrame
                 df = pd.DataFrame({
