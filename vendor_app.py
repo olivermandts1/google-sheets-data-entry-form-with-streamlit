@@ -159,10 +159,6 @@ if menu_item == "Creative Text Refresher":
         if st.session_state['responses']:
             st.write("Final Output:", st.session_state['responses'][-1])
 
-        # Display the final response
-        if st.session_state['responses']:
-            st.write("Final Output:", st.session_state['responses'][-1])
-
         # Dataframe for export
             def streamlit_app():
                 st.title("Editable JSON Data")
@@ -186,6 +182,10 @@ if menu_item == "Creative Text Refresher":
                                             [''] +
                                             [f'Description {i}' for i in range(1, 6)])
                     df['Content'] = df.index.map(data_dict.get)
+
+                    # Display the DataFrame content for debugging
+                    st.write("DataFrame Content:")
+                    st.dataframe(df)
 
                     # Display editable DataFrame
                     st.dataframe(df)
