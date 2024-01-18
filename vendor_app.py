@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from streamlit_gsheets import GSheetsConnection
 from openai import OpenAI
+import json
 
 
 # Define the necessary functions
