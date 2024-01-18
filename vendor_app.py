@@ -155,13 +155,9 @@ if menu_item == "Creative Text Refresher":
                 # Stop processing if any of the set is null
                 break
 
-        # Display the final response
-        if st.session_state['responses']:
-            st.write("Final Output:", st.session_state['responses'][-1])
 
         # Dataframe for export
             def streamlit_app():
-                st.title("Editable JSON Data")
 
                 # Check if there are responses and use the latest one
                 if st.session_state.get('responses'):
@@ -184,11 +180,9 @@ if menu_item == "Creative Text Refresher":
                     df['Content'] = df.index.map(data_dict.get)
 
                     # Display the DataFrame content for debugging
-                    st.write("DataFrame Content:")
+                    st.write("Paste this column starting at cell B101 in your FB Asset Building Launch Tab:")
                     st.dataframe(df)
 
-                    # Display editable DataFrame
-                    st.dataframe(df)
                 else:
                     st.write("No responses available.")
 
