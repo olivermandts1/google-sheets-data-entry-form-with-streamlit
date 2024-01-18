@@ -166,7 +166,6 @@ if menu_item == "Creative Text Refresher":
                 # Check if there are responses and use the latest one
                 if st.session_state.get('responses'):
                     json_data = st.session_state['responses'][-1]
-                    st.write("Final Output:", json_data)
 
                     # Convert JSON to dictionary
                     try:
@@ -186,7 +185,7 @@ if menu_item == "Creative Text Refresher":
                     # Display the DataFrame content for debugging
                     st.write("DataFrame Content:")
                     st.dataframe(df)
-                    
+
                     # Display editable DataFrame
                     st.dataframe(df)
                 else:
