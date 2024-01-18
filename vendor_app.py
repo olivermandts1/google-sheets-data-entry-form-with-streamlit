@@ -155,8 +155,11 @@ if menu_item == "Creative Text Refresher":
                 # Stop processing if any of the set is null
                 break
 
+        # Display the final response
+        if st.session_state['responses']:
+            st.write("Final Output:", st.session_state['responses'][-1])
 
-        # Dataframe for export
+       # Dataframe for export
             def streamlit_app():
 
                 # Check if there are responses and use the latest one
