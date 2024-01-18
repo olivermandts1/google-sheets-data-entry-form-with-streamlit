@@ -159,7 +159,8 @@ if menu_item == "Creative Text Refresher":
             if st.session_state['responses']:
                 st.write("Final Output:", st.session_state['responses'][-1])
                     # Check if there are responses and use the latest one
-        
+
+            # Check if there are responses and use the latest one
             if st.session_state.get('responses'):
                 json_data = st.session_state['responses'][-1]
                 st.write("Final Output:", json_data)
@@ -194,6 +195,7 @@ if menu_item == "Creative Text Refresher":
                 st.dataframe(df)
             else:
                 st.write("No responses available.")
+
 
 
 elif menu_item == "Prompt Chain Builder":
