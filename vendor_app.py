@@ -172,9 +172,9 @@ if menu_item == "Creative Text Refresher":
             else:
                 # Extracting data from the JSON structure
                 assets = data.get("assets", {})
-                headlines = assets.get("headlines", [])[:5]
-                primary_texts = assets.get("primary_texts", [])[:5]
-                descriptions = assets.get("descriptions", [])[:5]
+                headlines = [s.split(": ", 1)[1] if ": " in s else s for s in assets.get("headlines", [])[:5]]
+                primary_texts = [s.split(": ", 1)[1] if ": " in s else s for s in assets.get("primary_texts", [])[:5]]
+                descriptions = [s.split(": ", 1)[1] if ": " in s else s for s in assets.get("descriptions", [])[:5]]
 
                 # Pad lists with blank strings if they have less than 5 elements
                 headlines.extend([""] * (5 - len(headlines)))
