@@ -171,10 +171,10 @@ if menu_item == "Creative Text Refresher":
                 st.error("Invalid JSON format in the response.")
             else:
                 # Extracting data from the JSON structure
-                assets = data.get("assets", [])
-                headlines = [asset.get("headline", "") for asset in assets]
-                primary_texts = [asset.get("primary_text", "") for asset in assets]
-                descriptions = [asset.get("description", "") for asset in assets]
+                assets = data.get("assets", {})
+                headlines = assets.get("headlines", [])[:5]
+                primary_texts = assets.get("primary_texts", [])[:5]
+                descriptions = assets.get("descriptions", [])[:5]
 
                 # Pad lists with blank strings if they have less than 5 elements
                 headlines.extend([""] * (5 - len(headlines)))
@@ -185,10 +185,6 @@ if menu_item == "Creative Text Refresher":
                 df = pd.DataFrame({
                     "Content": headlines + [''] + primary_texts + [''] + descriptions
                 })
-
-                # Truncate the DataFrame to have at most 5 entries per section
-                max_entries = 5
-                df = df.iloc[:max_entries + 1 + max_entries + 1 + max_entries]
 
                 # Display the DataFrame content for debugging
                 st.write("Paste this table into Plutus:")
