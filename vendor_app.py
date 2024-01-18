@@ -158,6 +158,38 @@ if menu_item == "Creative Text Refresher":
         if st.session_state['responses']:
             st.write("Final Output:", st.session_state['responses'][-1])
 
+        # Dataframe for export app
+            def streamlit_app():
+                st.title("Editable JSON Data")
+
+                # Check if there are responses and use the latest one
+                if st.session_state.get('responses'):
+                    json_data = st.session_state['responses'][-1]
+                    st.write("Final Output:", json_data)
+
+                    # Convert JSON to dictionary
+                    try:
+                        data_dict = json.loads(json_data)
+                    except json.JSONDecodeError:
+                        st.error("Invalid JSON format in the response.")
+                        return
+
+                    # Create DataFrame
+                    df = pd.DataFrame(index=[f'Headline {i}' for i in range(1, 6)] +
+                                            [''] +
+                                            [f'Primary Text {i}' for i in range(1, 6)] +
+                                            [''] +
+                                            [f'Description {i}' for i in range(1, 6)])
+                    df['Content'] = df.index.map(data_dict.get)
+
+                    # Display editable DataFrame
+                    st.dataframe(df)
+                else:
+                    st.write("No responses available.")
+
+            if __name__ == "__main__":
+                streamlit_app()
+
 elif menu_item == "Prompt Chain Builder":
     # Display Title and Description
     st.title("Prompt Chain Builder")
