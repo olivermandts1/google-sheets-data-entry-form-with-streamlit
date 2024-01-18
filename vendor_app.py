@@ -159,36 +159,28 @@ if menu_item == "Creative Text Refresher":
         if st.session_state['responses']:
             st.write("Final Output:", st.session_state['responses'][-1])
 
+        # Dataframe for export
             def streamlit_app():
                 st.title("Editable JSON Data")
 
                 # Check if there are responses and use the latest one
                 if st.session_state.get('responses'):
                     json_data = st.session_state['responses'][-1]
-                    st.write("Received JSON Data:", json_data)
 
-                    # Try converting JSON to dictionary
+                    # Convert JSON to dictionary
                     try:
                         data_dict = json.loads(json_data)
-                    except json.JSONDecodeError as e:
-                        st.error(f"Invalid JSON format in the response: {e}")
-                        st.text("JSON Data Received:")
-                        st.text(json_data)
+                    except json.JSONDecodeError:
+                        st.error("Invalid JSON format in the response.")
                         return
 
-                    # Create DataFrame with structured index
+                    # Create DataFrame
                     df = pd.DataFrame(index=[f'Headline {i}' for i in range(1, 6)] +
-                                        [''] +
-                                        [f'Primary Text {i}' for i in range(1, 6)] +
-                                        [''] +
-                                        [f'Description {i}' for i in range(1, 6)])
-
-                    # Map the data to the DataFrame
-                    for key in ['Headlines', 'Primary Text', 'Descriptions']:
-                        if key in data_dict:
-                            for sub_key, value in data_dict[key].items():
-                                if sub_key in df.index:
-                                    df.at[sub_key, 'Content'] = value
+                                            [''] +
+                                            [f'Primary Text {i}' for i in range(1, 6)] +
+                                            [''] +
+                                            [f'Description {i}' for i in range(1, 6)])
+                    df['Content'] = df.index.map(data_dict.get)
 
                     # Display the DataFrame content for debugging
                     st.write("DataFrame Content:")
