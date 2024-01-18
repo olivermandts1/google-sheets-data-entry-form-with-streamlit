@@ -183,6 +183,9 @@ if menu_item == "Creative Text Refresher":
 
                     # Display the DataFrame content for debugging
                     st.dataframe(df)
+
+                    # Display editable DataFrame
+                    st.dataframe(df)
                 else:
                     st.write("No responses available.")
 
