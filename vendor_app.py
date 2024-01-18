@@ -155,10 +155,14 @@ if menu_item == "Creative Text Refresher":
                 # Stop processing if any of the set is null
                 break
 
+        # Display the final response
+        if st.session_state['responses']:
+            st.write("Final Output:", st.session_state['responses'][-1])
+                # Check if there are responses and use the latest one
+
         # Check if there are responses and use the latest one
         if st.session_state.get('responses'):
             json_data = st.session_state['responses'][-1]
-            st.write("Final Output:", json_data)
 
             # Convert JSON to dictionary
             try:
@@ -184,6 +188,7 @@ if menu_item == "Creative Text Refresher":
                 # Display the DataFrame content for debugging
                 st.write("Paste this table into Plutus:")
                 st.dataframe(df)
+
         else:
             st.write("No responses available.")
 
