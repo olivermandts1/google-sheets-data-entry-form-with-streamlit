@@ -52,7 +52,7 @@ menu_item = st.sidebar.selectbox("Menu", ["Creative Text Refresher", "Prompt Cha
 if menu_item == "Creative Text Refresher":
 
     st.subheader("📗 Refresh FB Creatives From Your Plutus Spreadsheet")
-    st.markdown("Currently Linked Plutus Sheet: https://docs.google.com/spreadsheets/d/141YaOszXibklI2qqRiyGdox3mpyCioFK5eJMtD78iJE/edit#gid=962857946")
+    st.markdown("Currently Linked Plutus Sheet: https://docs.google.com/spreadsheets/d/1tEFV9WwJ6U2WTcswKoZO2bu_SS4aeRoTGrcl0vaUmj0/edit?usp=sharing&resourcekey=0-8kWz4C2JZcJQgY4M-0N6bQ")
     st.markdown("Prompt Chain Repository: https://docs.google.com/spreadsheets/d/1tqm7G0yzckwSCKXdPcGcWNH6y5nMj68rhpMQZlcO2wU/edit#gid=954337905")
     st.write("#### 1. Retrieved Plutus Creatives")
 
