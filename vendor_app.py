@@ -400,9 +400,12 @@ elif menu_item == "Prompt Chain Builder":
         selected_chain = st.selectbox("Select a Prompt Chain to Edit", chain_names)
 
         if selected_chain:
+            # Re-fetch the existing data to ensure it's up-to-date
+            existing_data = conn.read(worksheet="PromptChainRepo", usecols=list(range(40)), ttl=5)
+            existing_data = existing_data.dropna(how="all")
+
             # Fetch the data for the selected chain
-            chain_data = conn.read(worksheet="PromptChainRepo", usecols=list(range(40)), ttl=5)
-            selected_chain_data = chain_data[chain_data['ChainName'] == selected_chain].iloc[0]
+            selected_chain_data = existing_data[existing_data['ChainName'] == selected_chain].iloc[0]
 
             # Initialize or update the session state for form count and responses
             st.session_state['form_count'] = sum(1 for i in range(1, 11) if pd.notnull(selected_chain_data.get(f'Model{i}')))
@@ -426,6 +429,23 @@ elif menu_item == "Prompt Chain Builder":
                     user_prompt = st.text_area('User Prompt', 
                                             value=selected_chain_data[f'UserPrompt{i+1}'], 
                                             key=f'user_{i}')
+
+            # Button to test the prompt chain
+            if st.button('Test Prompt Chain'):
+                # Code to test the chain (similar to new chain creation)
+                for i in range(st.session_state['form_count']):
+                    current_model = st.session_state[f'model_{i}']
+                    current_temperature = st.session_state[f'temp_{i}']
+                    current_system_prompt = st.session_state[f'system_{i}']
+                    current_user_prompt = st.session_state[f'user_{i}']
+
+                    # Generate response
+                    response = generate_response(current_system_prompt, current_user_prompt, current_model, current_temperature, openai_api_key, (headlines, primary_text, descriptions, forcekeys))
+                    st.session_state['responses'].append(response)
+
+                # Display the responses for testing
+                for i, response in enumerate(st.session_state['responses'], start=1):
+                    st.text(f"**Generated Response {i}:** \n\n{response}")
 
             # Button to update the prompt chain
             if st.button('Update Prompt Chain'):
@@ -452,12 +472,13 @@ elif menu_item == "Prompt Chain Builder":
                 updated_chain_df = pd.DataFrame([updated_chain_data])
 
                 # Remove the old entry and append the new one
-                existing_data = existing_data.drop(existing_data[existing_data['ChainName'] == selected_chain].index)
-                updated_df = pd.concat([existing_data, updated_chain_df], ignore_index=True)
+                updated_df = existing_data.drop(existing_data[existing_data['ChainName'] == selected_chain].index, inplace=False)
+                updated_df = pd.concat([updated_df, updated_chain_df], ignore_index=True)
 
                 # Update the Google Sheet
                 conn.update(worksheet="PromptChainRepo", data=updated_df)
                 st.success("Prompt chain successfully updated!")
+
 
 
 
