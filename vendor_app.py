@@ -56,7 +56,7 @@ def generate_response(api_key, model, temperature, system_prompt, user_prompt, d
     except Exception as e:
         st.error(f"Error occurred: {e}")
         return None
-
+    
 # Main application logic
 
 def main():
