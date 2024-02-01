@@ -8,14 +8,17 @@ import json
 
 def read_google_sheet(conn, worksheet, range_start, range_end, asset_types):
     """
-    Read data from Google Sheet and preprocess it.
+    Read data from Google Sheet and preprocess it. Assign specific asset types to rows.
     """
     df = conn.read(worksheet=worksheet, ttl=10)
     desired_range = df.iloc[range_start:range_end, 0:2]  # Dynamic range
 
-    # Assign asset types
-    for i, asset_type in enumerate(asset_types):
-        desired_range.iloc[i, 0] = asset_type
+    # Assign specific values to columns based on asset_types order
+    row_index = 0
+    for asset_type in asset_types:
+        num_rows = 5 if asset_type != 'Forcekeys' else 4  # 5 rows for all but Forcekeys, which has 4
+        desired_range.iloc[row_index:row_index+num_rows, 0] = asset_type
+        row_index += num_rows + 1  # Skip one row after each asset type
 
     # Replace NaN values with an empty string
     desired_range.fillna('', inplace=True)
