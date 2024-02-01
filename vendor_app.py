@@ -132,7 +132,12 @@ def main():
             selected_chain_data = chain_data[chain_data['ChainName'] == selected_chain].iloc[0]
 
             # Initialize variables for dynamic values
-            dynamic_values = (headlines, primary_text, descriptions, forcekeys)
+            dynamic_values = {
+                'headlines': headlines,
+                'primary_text': primary_text,
+                'descriptions': descriptions,
+                'forcekeys': forcekeys
+            }
 
             # Initialize a list to store responses
             st.session_state['responses'] = []
